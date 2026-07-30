@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Salle Comble — On remplit vos soirées</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,500;0,9..144,600;0,9..144,700;1,9..144,500&family=Inter:wght@400;500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#f4efe4;
+    --night:#0d0c10;
+    --night-2:#151319;
+    --wine:#5a1f2e;
+    --gold:#e7a13b;
+    --gold-dim:#a97c3a;
+    --line: rgba(244,239,228,0.14);
+    --muted: rgba(244,239,228,0.62);
+  }
+  *{box-sizing:border-box; margin:0; padding:0;}
+  html{scroll-behavior:smooth;}
+  body{
+    background:var(--night);
+    color:var(--ink);
+    font-family:'Inter', sans-serif;
+    overflow-x:hidden;
+  }
+  .grain{
+    position:fixed; inset:0; pointer-events:none; z-index:5; opacity:0.05; mix-blend-mode:overlay;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  }
+  h1,h2,h3{font-family:'Fraunces', serif; font-weight:600; line-height:1.05; letter-spacing:-0.01em;}
+  .eyebrow{
+    font-family:'Space Mono', monospace; text-transform:uppercase; letter-spacing:0.16em; font-size:0.72rem;
+    color:var(--gold); display:flex; align-items:center; gap:10px;
+  }
+  .eyebrow::before{content:''; width:24px; height:1px; background:var(--gold);}
+
+  nav{
+    position:fixed; top:0; left:0; right:0; z-index:50;
+    display:flex; align-items:center; justify-content:space-between;
+    padding:20px 6vw; backdrop-filter:blur(10px);
+    background:linear-gradient(to bottom, rgba(13,12,16,0.9), rgba(13,12,16,0));
+  }
+  .logo{font-family:'Fraunces', serif; font-size:1.25rem; font-weight:600; letter-spacing:-0.01em;}
+  .logo span{color:var(--gold);}
+  .nav-cta{
+    font-family:'Inter'; font-size:0.85rem; font-weight:600; color:var(--night);
+    background:var(--gold); padding:10px 20px; border-radius:100px; text-decoration:none;
+    transition:transform .25s ease, box-shadow .25s ease;
+    white-space:nowrap;
+  }
+  .nav-cta:hover{transform:translateY(-2px); box-shadow:0 8px 24px rgba(231,161,59,0.35);}
+
+  section{padding:140px 6vw; position:relative;}
+  .hero{
+    min-height:100vh; display:flex; flex-direction:column; justify-content:center;
+    padding-top:120px;
+    background:
+      radial-gradient(ellipse 60% 50% at 50% 0%, rgba(231,161,59,0.16), transparent 70%),
+      radial-gradient(ellipse 80% 60% at 80% 100%, rgba(90,31,46,0.35), transparent 70%);
+  }
+  .hero-inner{max-width:920px;}
+  .hero h1{
+    font-size:clamp(2.4rem, 5.4vw, 4.6rem);
+    margin:22px 0 28px;
+  }
+  .hero h1 em{font-style:italic; color:var(--gold); font-weight:500;}
+  .hero p.lead{
+    font-size:1.15rem; color:var(--muted); max-width:560px; line-height:1.6; margin-bottom:44px;
+  }
+  .cta-row{display:flex; gap:16px; flex-wrap:wrap; align-items:center;}
+  .btn-primary{
+    font-family:'Inter'; font-weight:700; font-size:0.95rem; color:var(--night);
+    background:var(--gold); padding:17px 30px; border-radius:100px; text-decoration:none;
+    display:inline-flex; align-items:center; gap:10px;
+    transition:transform .25s ease, box-shadow .25s ease;
+    box-shadow:0 0 0 rgba(231,161,59,0);
+  }
+  .btn-primary:hover{transform:translateY(-3px); box-shadow:0 12px 30px rgba(231,161,59,0.3);}
+  .btn-ghost{
+    font-family:'Inter'; font-weight:600; font-size:0.95rem; color:var(--ink);
+    border:1px solid var(--line); padding:16px 28px; border-radius:100px; text-decoration:none;
+    transition:border-color .25s ease, background .25s ease;
+  }
+  .btn-ghost:hover{border-color:var(--gold); background:rgba(231,161,59,0.06);}
+
+  .rope-track{
+    position:absolute; left:50%; top:100%; width:1px; height:120px; transform:translateX(-50%);
+    background:repeating-linear-gradient(to bottom, var(--gold-dim) 0 6px, transparent 6px 14px);
+    opacity:0.6;
+  }
+
+  .marquee-strip{
+    border-top:1px solid var(--line); border-bottom:1px solid var(--line);
+    padding:18px 0; overflow:hidden; white-space:nowrap;
+  }
+  .marquee-strip div{
+    display:inline-block; animation:scroll 26s linear infinite;
+    font-family:'Space Mono', monospace; font-size:0.82rem; letter-spacing:0.08em; color:var(--muted);
+  }
+  .marquee-strip span{margin:0 2.2rem;}
+  @keyframes scroll{ from{transform:translateX(0);} to{transform:translateX(-50%);} }
+
+  .problem-grid{
+    display:grid; grid-template-columns:repeat(3, 1fr); gap:2px; margin-top:60px;
+    background:var(--line); border:1px solid var(--line);
+  }
+  .problem-card{background:var(--night); padding:38px 32px;}
+  .problem-card .num{font-family:'Space Mono'; color:var(--gold-dim); font-size:0.8rem;}
+  .problem-card h3{font-size:1.25rem; margin:16px 0 12px; font-weight:500;}
+  .problem-card p{color:var(--muted); font-size:0.95rem; line-height:1.6;}
+
+  .section-head{max-width:640px; margin-bottom:56px;}
+  .section-head h2{font-size:clamp(1.9rem, 3.4vw, 2.8rem); margin-top:16px;}
+  .section-head p{color:var(--muted); margin-top:18px; font-size:1.05rem; line-height:1.6;}
+
+  .pillars{display:grid; grid-template-columns:repeat(3,1fr); gap:28px; margin-top:20px;}
+  .pillar{
+    border:1px solid var(--line); border-radius:18px; padding:36px 30px; background:var(--night-2);
+    transition:border-color .25s ease, transform .25s ease;
+  }
+  .pillar:hover{border-color:var(--gold-dim); transform:translateY(-4px);}
+  .pillar .icon{
+    width:44px; height:44px; border-radius:12px; background:rgba(231,161,59,0.12);
+    display:flex; align-items:center; justify-content:center; margin-bottom:22px; color:var(--gold); font-size:1.3rem;
+  }
+  .pillar h3{font-size:1.2rem; font-weight:500; margin-bottom:12px;}
+  .pillar p{color:var(--muted); font-size:0.92rem; line-height:1.6;}
+
+  .process{
+    background:var(--night-2); border-top:1px solid var(--line); border-bottom:1px solid var(--line);
+  }
+  .steps{display:flex; flex-direction:column; margin-top:20px;}
+  .step{
+    display:grid; grid-template-columns:90px 1fr; gap:28px; padding:32px 0; border-top:1px solid var(--line);
+    align-items:start;
+  }
+  .step:last-child{border-bottom:1px solid var(--line);}
+  .step .num{font-family:'Fraunces'; font-size:2.2rem; color:var(--gold-dim); font-weight:300;}
+  .step h3{font-size:1.3rem; font-weight:500; margin-bottom:8px;}
+  .step p{color:var(--muted); font-size:0.98rem; line-height:1.6; max-width:560px;}
+
+  .stats{display:grid; grid-template-columns:repeat(4,1fr); gap:2px; background:var(--line); border:1px solid var(--line); margin-top:20px;}
+  .stat{background:var(--night); padding:34px 24px; text-align:center;}
+  .stat .n{font-family:'Fraunces'; font-size:2.4rem; color:var(--gold); font-weight:600;}
+  .stat .l{color:var(--muted); font-size:0.82rem; margin-top:8px; letter-spacing:0.02em;}
+  .stats-note{color:var(--muted); font-size:0.8rem; margin-top:18px; font-style:italic;}
+
+  .mid-cta{
+    text-align:center; padding:100px 6vw;
+    background:radial-gradient(ellipse 70% 100% at 50% 50%, rgba(231,161,59,0.1), transparent 70%);
+  }
+  .mid-cta h2{font-size:clamp(1.8rem, 3.6vw, 2.6rem); max-width:700px; margin:0 auto 34px;}
+
+  .final{
+    background:var(--night-2); border-top:1px solid var(--line);
+  }
+  .final-inner{display:grid; grid-template-columns:1fr 1fr; gap:60px; align-items:start;}
+  .final-left h2{font-size:clamp(2rem, 3.8vw, 2.9rem); margin:16px 0 24px;}
+  .final-left p{color:var(--muted); font-size:1.02rem; line-height:1.7; margin-bottom:28px;}
+  .checklist{list-style:none; display:flex; flex-direction:column; gap:14px;}
+  .checklist li{display:flex; gap:12px; align-items:flex-start; color:var(--ink); font-size:0.95rem;}
+  .checklist li::before{content:'✓'; color:var(--gold); font-weight:700; flex-shrink:0;}
+
+  .calendly-frame{
+    border:1px solid var(--line); border-radius:20px; overflow:hidden; background:#fff;
+    min-height:640px; display:flex; align-items:center; justify-content:center;
+  }
+  .calendly-inline-widget{min-width:100%; height:640px;}
+
+  footer{
+    padding:40px 6vw; border-top:1px solid var(--line); display:flex; justify-content:space-between;
+    align-items:center; flex-wrap:wrap; gap:12px; color:var(--muted); font-size:0.85rem;
+  }
+  footer .logo{font-size:1rem;}
+
+  [data-reveal]{opacity:0; transform:translateY(24px); transition:opacity .7s ease, transform .7s ease;}
+  [data-reveal].in{opacity:1; transform:translateY(0);}
+
+  @media (max-width: 900px){
+    section{padding:90px 6vw;}
+    .problem-grid, .pillars{grid-template-columns:1fr;}
+    .stats{grid-template-columns:repeat(2,1fr);}
+    .step{grid-template-columns:56px 1fr;}
+    .final-inner{grid-template-columns:1fr; gap:40px;}
+    .cta-row{flex-direction:column; align-items:stretch;}
+    .cta-row a{text-align:center; justify-content:center;}
+  }
+</style>
+</head>
+<body>
+<div class="grain"></div>
+
+<nav>
+  <div class="logo">Salle<span>Comble</span></div>
+  <a href="#contact" class="nav-cta">Remplir ma salle</a>
+</nav>
+
+<section class="hero">
+  <div class="hero-inner">
+    <p class="eyebrow">Publicité Facebook &amp; Instagram pour l'événementiel</p>
+    <h1>On remplit vos soirées <em>avant</em> même que vous ayez ouvert les portes.</h1>
+    <p class="lead">Salle Comble aide les organisateurs de soirées, clubs, bars à événements et prestataires événementiel à trouver plus de clients et plus d'invités — grâce à des campagnes publicitaires pensées pour transformer un scroll Instagram en place réservée.</p>
+    <div class="cta-row">
+      <a href="#contact" class="btn-primary">Réserver mon appel gratuit →</a>
+      <a href="#comment" class="btn-ghost">Voir comment ça marche</a>
+    </div>
+  </div>
+  <div class="rope-track"></div>
+</section>
+
+<div class="marquee-strip">
+  <div>
+    <span>SOIRÉES PRIVÉES</span><span>CLUBS &amp; BARS</span><span>WEDDING PLANNERS</span><span>FESTIVALS</span><span>TRAITEURS ÉVÉNEMENTIEL</span><span>LIEUX DE RÉCEPTION</span>
+    <span>SOIRÉES PRIVÉES</span><span>CLUBS &amp; BARS</span><span>WEDDING PLANNERS</span><span>FESTIVALS</span><span>TRAITEURS ÉVÉNEMENTIEL</span><span>LIEUX DE RÉCEPTION</span>
+  </div>
+</div>
+
+<section id="probleme">
+  <div class="section-head" data-reveal>
+    <p class="eyebrow">Le constat</p>
+    <h2>Votre événement est excellent. Le problème, c'est que pas assez de monde le sait.</h2>
+    <p>Le bouche-à-oreille et les réseaux organiques ne suffisent plus à garantir une salle pleine, semaine après semaine.</p>
+  </div>
+  <div class="problem-grid" data-reveal>
+    <div class="problem-card">
+      <p class="num">01</p>
+      <h3>Une jauge qui reste incertaine</h3>
+      <p>Vous ne savez jamais vraiment combien de personnes viendront avant le jour J, ce qui rend chaque soirée stressante à organiser.</p>
+    </div>
+    <div class="problem-card">
+      <p class="num">02</p>
+      <h3>Une pub qui coûte sans convertir</h3>
+      <p>Boost de post, pub mal ciblée : le budget part, mais les réservations ne suivent pas.</p>
+    </div>
+    <div class="problem-card">
+      <p class="num">03</p>
+      <h3>Toujours les mêmes visages</h3>
+      <p>Vous touchez votre cercle habituel, mais peinez à faire venir de nouveaux clients et invités chaque mois.</p>
+    </div>
+  </div>
+</section>
+
+<section id="solution">
+  <div class="section-head" data-reveal>
+    <p class="eyebrow">Notre approche</p>
+    <h2>Ce qu'on met en place pour vous</h2>
+    <p>On gère de A à Z vos campagnes Facebook &amp; Instagram Ads, pensées spécifiquement pour l'événementiel.</p>
+  </div>
+  <div class="pillars" data-reveal>
+    <div class="pillar">
+      <div class="icon">◎</div>
+      <h3>Ciblage précis</h3>
+      <p>On identifie et on atteint les personnes de votre zone qui sortent réellement, aiment ce type d'événement et ont le budget pour venir.</p>
+    </div>
+    <div class="pillar">
+      <div class="icon">▲</div>
+      <h3>Créas qui arrêtent le scroll</h3>
+      <p>Visuels et vidéos pensés pour capter l'attention en 2 secondes et donner envie de réserver sa place, pas juste de liker.</p>
+    </div>
+    <div class="pillar">
+      <div class="icon">◇</div>
+      <h3>Tunnel qui convertit</h3>
+      <p>De la pub jusqu'à la réservation : un parcours simple et rapide qui transforme les curieux en invités confirmés.</p>
+    </div>
+  </div>
+</section>
+
+<section id="comment" class="process">
+  <div class="section-head" data-reveal>
+    <p class="eyebrow">Comment ça marche</p>
+    <h2>Notre méthode, en 4 étapes</h2>
+  </div>
+  <div class="steps" data-reveal>
+    <div class="step">
+      <div class="num">01</div>
+      <div><h3>Audit gratuit de votre événement</h3><p>On regarde votre positionnement, votre cible et ce qui freine aujourd'hui votre remplissage.</p></div>
+    </div>
+    <div class="step">
+      <div class="num">02</div>
+      <div><h3>Stratégie publicitaire sur mesure</h3><p>On construit un plan de campagnes Facebook &amp; Instagram adapté à votre type d'événement et à votre budget.</p></div>
+    </div>
+    <div class="step">
+      <div class="num">03</div>
+      <div><h3>Lancement des campagnes</h3><p>Créas, ciblage, tunnel de réservation : on met tout en ligne et on optimise en continu.</p></div>
+    </div>
+    <div class="step">
+      <div class="num">04</div>
+      <div><h3>Votre salle se remplit</h3><p>Vous recevez des demandes et des réservations, on suit les résultats ensemble chaque semaine.</p></div>
+    </div>
+  </div>
+</section>
+
+<section id="resultats">
+  <div class="section-head" data-reveal>
+    <p class="eyebrow">Ce que ça peut donner</p>
+    <h2>Des campagnes pensées pour un seul objectif : une salle pleine</h2>
+  </div>
+  <div class="stats" data-reveal>
+    <div class="stat"><div class="n">+</div><div class="l">De nouveaux invités touchés chaque mois</div></div>
+    <div class="stat"><div class="n">↓</div><div class="l">Coût par réservation optimisé en continu</div></div>
+    <div class="stat"><div class="n">24/7</div><div class="l">Campagnes actives, même quand vous dormez</div></div>
+    <div class="stat"><div class="n">100%</div><div class="l">Suivi et reporting transparent</div></div>
+  </div>
+  <p class="stats-note">Résultats illustratifs — chaque événement a ses propres objectifs, discutés ensemble lors de l'audit.</p>
+</section>
+
+<div class="mid-cta" data-reveal>
+  <h2>Prêt à arrêter de compter sur la chance pour remplir votre prochaine soirée ?</h2>
+  <a href="#contact" class="btn-primary">Réserver mon appel gratuit →</a>
+</div>
+
+<section id="contact" class="final">
+  <div class="final-inner">
+    <div class="final-left" data-reveal>
+      <p class="eyebrow">Dernière étape</p>
+      <h2>Discutons de votre prochain événement</h2>
+      <p>Choisissez un créneau ci-contre pour un appel gratuit de 20 minutes. On regarde ensemble votre événement et si Salle Comble peut vous aider à trouver plus de clients et plus d'invités.</p>
+      <ul class="checklist">
+        <li>Aucun engagement, juste un échange concret</li>
+        <li>On repart avec un premier axe de campagne</li>
+        <li>Réponse claire sur ce qu'on peut vous apporter</li>
+      </ul>
+    </div>
+    <div data-reveal>
+      <div class="calendly-frame">
+        <!--
+          👉 Intégration Calendly :
+          Remplacez l'URL ci-dessous par votre lien Calendly réel,
+          puis décommentez le script Calendly en bas de page.
+        -->
+        <div class="calendly-inline-widget" data-url="https://calendly.com/votre-lien/appel-decouverte" style="min-width:320px;"></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="logo">Salle<span style="color:var(--gold);">Comble</span></div>
+  <div>© 2026 Salle Comble — Agence Facebook &amp; Instagram Ads pour l'événementiel</div>
+</footer>
+
+<!-- Décommentez cette ligne une fois votre lien Calendly renseigné ci-dessus -->
+<!-- <script src="https://assets.calendly.com/assets/external/widget.js" type="text/javascript" async></script> -->
+
+<script>
+  const els = document.querySelectorAll('[data-reveal]');
+  const io = new IntersectionObserver((entries)=>{
+    entries.forEach(e=>{ if(e.isIntersecting){ e.target.classList.add('in'); io.unobserve(e.target); } });
+  }, {threshold:0.15});
+  els.forEach(el=>io.observe(el));
+</script>
+
+</body>
+</html>
