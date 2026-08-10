@@ -163,6 +163,18 @@
   .checklist li{display:flex; gap:12px; align-items:flex-start; color:var(--ink); font-size:0.95rem;}
   .checklist li::before{content:'✓'; color:var(--gold); font-weight:700; flex-shrink:0;}
 
+  .vsl-frame{
+    border:1px solid var(--line); border-radius:20px; overflow:hidden;
+    background:var(--night); margin-bottom:20px;
+  }
+  .vsl-frame video{
+    width:100%; aspect-ratio:16/9; display:block; object-fit:cover; background:#000;
+  }
+  .vsl-label{
+    font-family:'Space Mono', monospace; font-size:0.78rem; color:var(--muted);
+    margin-bottom:14px; letter-spacing:0.02em;
+  }
+
   .calendly-frame{
     border:1px solid var(--line); border-radius:20px; overflow:hidden; background:#fff;
     min-height:640px; display:flex; align-items:center; justify-content:center;
@@ -472,10 +484,14 @@
       </ul>
     </div>
     <div data-reveal>
-      <!-- 🎥 VSL : si vous en avez une, insérez-la ici, juste au-dessus du calendly-frame -->
+      <p class="vsl-label">↓ 90 secondes pour comprendre comment on travaille</p>
+      <div class="vsl-frame">
+        <video controls autoplay muted playsinline>
+          <source src="assets/vidéos/example.mp4" type="video/mp4">
+        </video>
+      </div>
       <div class="calendly-frame">
-        <div class="calendly-inline-widget" data-url="https://calendly.com/bastiencochet2007/30min"></div>
-        <script type="text/javascript" src="https://assets.calendly.com/assets/external/widget.js" async></script>
+        <div class="calendly-inline-widget" data-url="https://calendly.com/bastiencochet2007/30min" style="min-width:320px;"></div>
       </div>
     </div>
   </div>
@@ -486,8 +502,7 @@
   <div>© 2026 Affluo — Agence Facebook &amp; Instagram Ads pour l'événementiel</div>
 </footer>
 
-<!-- Décommentez cette ligne une fois votre lien Calendly renseigné ci-dessus -->
-<!-- <script src="https://assets.calendly.com/assets/external/widget.js" type="text/javascript" async></script> -->
+<script src="https://assets.calendly.com/assets/external/widget.js" type="text/javascript" async></script>
 
 <script>
   const els = document.querySelectorAll('[data-reveal]');
