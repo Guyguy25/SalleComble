@@ -163,6 +163,12 @@
   .checklist li{display:flex; gap:12px; align-items:flex-start; color:var(--ink); font-size:0.95rem;}
   .checklist li::before{content:'✓'; color:var(--gold); font-weight:700; flex-shrink:0;}
 
+  .vsl-section{
+    padding:40px 6vw 100px; max-width:840px; margin:0 auto;
+  }
+  .vsl-section .vsl-label{
+    text-align:center; font-size:0.85rem; margin-bottom:20px;
+  }
   .vsl-frame{
     border:1px solid var(--line); border-radius:20px; overflow:hidden;
     background:var(--night); margin-bottom:20px;
@@ -222,6 +228,14 @@
   }
   .founder-card p{color:var(--muted); font-size:0.9rem; line-height:1.55;}
 
+  .placeholder-tag{
+    display:inline-block; font-family:'Space Mono', monospace; font-size:0.66rem; color:var(--gold-dim);
+    border:1px dashed var(--gold-dim); border-radius:100px; padding:4px 11px; margin-bottom:16px; letter-spacing:0.04em;
+  }
+  .testimonial-quote{
+    color:var(--muted); font-style:italic; font-size:0.98rem; line-height:1.65; margin-bottom:20px;
+  }
+
   .faq{margin-top:20px; border-top:1px solid var(--line);}
   .faq details{border-bottom:1px solid var(--line); padding:24px 0;}
   .faq summary{
@@ -270,6 +284,15 @@
     </div>
   </div>
   <div class="rope-track"></div>
+</section>
+
+<section class="vsl-section" data-reveal>
+  <p class="vsl-label">↓ 90 secondes pour comprendre comment on travaille</p>
+  <div class="vsl-frame">
+    <video controls autoplay muted playsinline>
+      <source src="assets/vidéos/example.mp4" type="video/mp4">
+    </video>
+  </div>
 </section>
 
 <div class="marquee-strip">
@@ -354,32 +377,33 @@
   </div>
 </section>
 
-<!--
-  🎯 SECTION TÉMOIGNAGES — à activer dès que vous avez de vrais retours clients.
-  Ne jamais inventer d'avis : en France les faux témoignages sont illégaux (DGCCRF) et ça se voit vite.
-  Pour l'activer : décommentez le bloc ci-dessous et remplacez les [ ] par de vrais éléments
-  (prénom, nom de la soirée, résultat chiffré si possible — même "+40 invités en 3 semaines" suffit).
-
 <section id="temoignages">
   <div class="section-head" data-reveal>
     <p class="eyebrow">Ils nous ont fait confiance</p>
     <h2>Ce que ça a donné pour eux</h2>
+    <p>Section à compléter dès vos premiers retours clients réels — jamais d'avis inventés.</p>
   </div>
   <div class="pillars" data-reveal>
     <div class="pillar">
-      <p style="color:var(--ink); font-size:1rem; line-height:1.6; margin-bottom:20px;">"[Citation courte du client sur le résultat obtenu]"</p>
-      <h3 style="font-size:1rem;">[Prénom Nom]</h3>
+      <span class="placeholder-tag">à compléter</span>
+      <p class="testimonial-quote">"[Citation courte du client sur le résultat obtenu]"</p>
+      <h3 style="font-size:1rem; font-weight:500;">[Prénom Nom]</h3>
+      <p style="font-size:0.85rem;">[Nom de la soirée / du lieu]</p>
+    </div>
+    <div class="pillar">
+      <span class="placeholder-tag">à compléter</span>
+      <p class="testimonial-quote">"[Citation courte du client sur le résultat obtenu]"</p>
+      <h3 style="font-size:1rem; font-weight:500;">[Prénom Nom]</h3>
+      <p style="font-size:0.85rem;">[Nom de la soirée / du lieu]</p>
+    </div>
+    <div class="pillar">
+      <span class="placeholder-tag">à compléter</span>
+      <p class="testimonial-quote">"[Citation courte du client sur le résultat obtenu]"</p>
+      <h3 style="font-size:1rem; font-weight:500;">[Prénom Nom]</h3>
       <p style="font-size:0.85rem;">[Nom de la soirée / du lieu]</p>
     </div>
   </div>
 </section>
--->
-
-<!--
-  🎥 VSL — à activer dès que vous avez une vidéo de présentation (60-90 sec, face caméra).
-  Placez-la juste au-dessus du Calendly dans la section #contact, pas dans le hero.
-  Structure suggérée : le problème (salle pas remplie) → ce qu'on fait → ce qui se passe sur l'appel.
--->
 
 <section id="resultats">
   <div class="section-head" data-reveal>
@@ -484,12 +508,6 @@
       </ul>
     </div>
     <div data-reveal>
-      <p class="vsl-label">↓ 90 secondes pour comprendre comment on travaille</p>
-      <div class="vsl-frame">
-        <video controls autoplay muted playsinline>
-          <source src="assets/vidéos/example.mp4" type="video/mp4">
-        </video>
-      </div>
       <div class="calendly-frame">
         <div class="calendly-inline-widget" data-url="https://calendly.com/bastiencochet2007/30min" style="min-width:320px;"></div>
       </div>
