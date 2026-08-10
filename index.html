@@ -178,9 +178,55 @@
   [data-reveal]{opacity:0; transform:translateY(24px); transition:opacity .7s ease, transform .7s ease;}
   [data-reveal].in{opacity:1; transform:translateY(0);}
 
+  .cta-note{
+    font-family:'Space Mono', monospace; font-size:0.78rem; color:var(--muted);
+    margin-top:18px; letter-spacing:0.02em; display:flex; flex-wrap:wrap; gap:8px 18px; align-items:center;
+  }
+  .cta-note span{display:inline-flex; align-items:center; gap:6px;}
+  .cta-note span::before{content:'✓'; color:var(--gold);}
+
+  .highlight-box{
+    border:1px solid var(--gold-dim); border-radius:18px; padding:36px 34px;
+    background:rgba(231,161,59,0.05); margin-top:8px;
+  }
+  .highlight-box .checklist{margin-bottom:0;}
+  .pour-qui-note{color:var(--muted); font-size:0.95rem; margin-top:22px; line-height:1.6;}
+
+  .founders-grid{display:grid; grid-template-columns:repeat(2,1fr); gap:24px; margin-top:20px;}
+  .founder-card{
+    border:1px solid var(--line); border-radius:18px; padding:32px 28px; background:var(--night-2);
+    display:flex; gap:20px; align-items:flex-start;
+  }
+  .founder-avatar{
+    width:56px; height:56px; border-radius:50%; flex-shrink:0;
+    background:rgba(231,161,59,0.14); border:1px solid var(--gold-dim); color:var(--gold);
+    font-family:'Fraunces', serif; font-size:1.3rem; font-weight:600;
+    display:flex; align-items:center; justify-content:center;
+  }
+  .founder-card h3{font-size:1.1rem; font-weight:500; margin-bottom:3px;}
+  .founder-role{
+    font-family:'Space Mono', monospace; font-size:0.7rem; color:var(--gold-dim);
+    text-transform:uppercase; letter-spacing:0.08em; margin-bottom:10px;
+  }
+  .founder-card p{color:var(--muted); font-size:0.9rem; line-height:1.55;}
+
+  .faq{margin-top:20px; border-top:1px solid var(--line);}
+  .faq details{border-bottom:1px solid var(--line); padding:24px 0;}
+  .faq summary{
+    cursor:pointer; font-family:'Fraunces', serif; font-size:1.08rem; font-weight:500;
+    list-style:none; display:flex; justify-content:space-between; align-items:center; gap:20px;
+  }
+  .faq summary::-webkit-details-marker{display:none;}
+  .faq summary::after{
+    content:'+'; color:var(--gold); font-size:1.5rem; font-weight:300; flex-shrink:0;
+    transition:transform .25s ease;
+  }
+  .faq details[open] summary::after{content:'–';}
+  .faq p{color:var(--muted); margin-top:14px; font-size:0.95rem; line-height:1.65; max-width:640px;}
+
   @media (max-width: 900px){
     section{padding:90px 6vw;}
-    .problem-grid, .pillars{grid-template-columns:1fr;}
+    .problem-grid, .pillars, .founders-grid{grid-template-columns:1fr;}
     .stats{grid-template-columns:repeat(2,1fr);}
     .step{grid-template-columns:56px 1fr;}
     .final-inner{grid-template-columns:1fr; gap:40px;}
@@ -205,6 +251,10 @@
     <div class="cta-row">
       <a href="#contact" class="btn-primary">Réserver mon appel gratuit →</a>
       <a href="#comment" class="btn-ghost">Voir comment ça marche</a>
+    </div>
+    <div class="cta-note">
+      <span>20 minutes, sans engagement</span>
+      <span>Aucune carte bancaire requise</span>
     </div>
   </div>
   <div class="rope-track"></div>
@@ -292,6 +342,33 @@
   </div>
 </section>
 
+<!--
+  🎯 SECTION TÉMOIGNAGES — à activer dès que vous avez de vrais retours clients.
+  Ne jamais inventer d'avis : en France les faux témoignages sont illégaux (DGCCRF) et ça se voit vite.
+  Pour l'activer : décommentez le bloc ci-dessous et remplacez les [ ] par de vrais éléments
+  (prénom, nom de la soirée, résultat chiffré si possible — même "+40 invités en 3 semaines" suffit).
+
+<section id="temoignages">
+  <div class="section-head" data-reveal>
+    <p class="eyebrow">Ils nous ont fait confiance</p>
+    <h2>Ce que ça a donné pour eux</h2>
+  </div>
+  <div class="pillars" data-reveal>
+    <div class="pillar">
+      <p style="color:var(--ink); font-size:1rem; line-height:1.6; margin-bottom:20px;">"[Citation courte du client sur le résultat obtenu]"</p>
+      <h3 style="font-size:1rem;">[Prénom Nom]</h3>
+      <p style="font-size:0.85rem;">[Nom de la soirée / du lieu]</p>
+    </div>
+  </div>
+</section>
+-->
+
+<!--
+  🎥 VSL — à activer dès que vous avez une vidéo de présentation (60-90 sec, face caméra).
+  Placez-la juste au-dessus du Calendly dans la section #contact, pas dans le hero.
+  Structure suggérée : le problème (salle pas remplie) → ce qu'on fait → ce qui se passe sur l'appel.
+-->
+
 <section id="resultats">
   <div class="section-head" data-reveal>
     <p class="eyebrow">Ce que ça peut donner</p>
@@ -304,6 +381,76 @@
     <div class="stat"><div class="n">100%</div><div class="l">Suivi et reporting transparent</div></div>
   </div>
   <p class="stats-note">Résultats illustratifs — chaque événement a ses propres objectifs, discutés ensemble lors de l'audit.</p>
+</section>
+
+<section id="pour-qui">
+  <div class="section-head" data-reveal>
+    <p class="eyebrow">Pour qui</p>
+    <h2>On ne travaille pas avec tout le monde</h2>
+    <p>Pour que la collaboration soit rentable des deux côtés, on se concentre sur des événements qui ont un vrai potentiel de croissance.</p>
+  </div>
+  <div class="highlight-box" data-reveal>
+    <ul class="checklist">
+      <li>Vous organisez des soirées, événements ou gérez un lieu de réception</li>
+      <li>Vous visez au moins 100 nouveaux invités par événement</li>
+      <li>Vous êtes prêt à investir en publicité pour accélérer le remplissage</li>
+    </ul>
+    <p class="pour-qui-note">Si ça vous ressemble, réservez votre appel plus bas — on vous dira franchement si on peut vous aider.</p>
+  </div>
+</section>
+
+<section id="fondateurs" class="process">
+  <div class="section-head" data-reveal>
+    <p class="eyebrow">Qui gère votre compte</p>
+    <h2>Deux personnes, pas une agence anonyme</h2>
+  </div>
+  <div class="founders-grid" data-reveal>
+    <div class="founder-card">
+      <div class="founder-avatar">T</div>
+      <div>
+        <h3>Tanguy</h3>
+        <p class="founder-role">Ads, funnel &amp; créas</p>
+        <p>Pilote les campagnes Facebook &amp; Instagram, du ciblage aux créatifs qui donnent envie de réserver.</p>
+      </div>
+    </div>
+    <div class="founder-card">
+      <div class="founder-avatar">B</div>
+      <div>
+        <h3>Bastien</h3>
+        <p class="founder-role">Closing &amp; suivi client</p>
+        <p>Échange avec chaque prospect sur l'appel découverte et l'accompagne tout au long de la collaboration.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="faq">
+  <div class="section-head" data-reveal>
+    <p class="eyebrow">Questions fréquentes</p>
+    <h2>Avant de réserver</h2>
+  </div>
+  <div class="faq" data-reveal>
+    <details>
+      <summary>Combien de temps dure l'appel ?</summary>
+      <p>20 minutes. On regarde ensemble votre événement, votre cible et si Affluo peut réellement vous aider — sans blabla commercial.</p>
+    </details>
+    <details>
+      <summary>Y a-t-il un engagement ?</summary>
+      <p>Non, l'appel découverte est gratuit et sans engagement. Si on avance ensemble, le fonctionnement et la tarification vous seront expliqués clairement avant toute signature.</p>
+    </details>
+    <details>
+      <summary>Quel budget publicitaire faut-il prévoir ?</summary>
+      <p>Ça dépend de votre zone et de vos objectifs de remplissage, on en discute ensemble sur l'appel pour définir un budget cohérent avec vos objectifs.</p>
+    </details>
+    <details>
+      <summary>En combien de temps voit-on les premiers résultats ?</summary>
+      <p>Les campagnes sont généralement lancées quelques jours après notre échange. Le délai avant les premières réservations dépend ensuite du calendrier de votre événement.</p>
+    </details>
+    <details>
+      <summary>Travaillez-vous avec tous les types d'événements ?</summary>
+      <p>Non. On se concentre uniquement sur l'événementiel — soirées, clubs, bars à événements, wedding planners, festivals, lieux de réception. C'est notre seule spécialité.</p>
+    </details>
+  </div>
 </section>
 
 <div class="mid-cta" data-reveal>
@@ -321,14 +468,14 @@
         <li>Aucun engagement, juste un échange concret</li>
         <li>On repart avec un premier axe de campagne</li>
         <li>Réponse claire sur ce qu'on peut vous apporter</li>
+        <li>Idéal si vous visez 100+ invités par événement</li>
       </ul>
     </div>
     <div data-reveal>
+      <!-- 🎥 VSL : si vous en avez une, insérez-la ici, juste au-dessus du calendly-frame -->
       <div class="calendly-frame">
-        <!-- Calendly inline widget begin -->
         <div class="calendly-inline-widget" data-url="https://calendly.com/bastiencochet2007/30min"></div>
         <script type="text/javascript" src="https://assets.calendly.com/assets/external/widget.js" async></script>
-        <!-- Calendly inline widget end -->
       </div>
     </div>
   </div>
