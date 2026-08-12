@@ -181,6 +181,49 @@
     margin-bottom:14px; letter-spacing:0.02em;
   }
 
+  .preform-card{
+    border:1px solid var(--line); border-radius:20px; padding:34px 32px; background:var(--night-2);
+  }
+  .preform{display:flex; flex-direction:column; gap:16px;}
+  .preform label{
+    font-family:'Space Mono', monospace; font-size:0.7rem; color:var(--muted);
+    text-transform:uppercase; letter-spacing:0.06em; margin-bottom:7px; display:block;
+  }
+  .preform input, .preform select{
+    width:100%; background:var(--night); border:1px solid var(--line); border-radius:10px;
+    color:var(--ink); padding:12px 14px; font-family:'Inter'; font-size:0.92rem;
+    outline:none; transition:border-color .2s ease; appearance:none;
+  }
+  .preform select{
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%23a97c3a' stroke-width='1.5' fill='none'/%3E%3C/svg%3E");
+    background-repeat:no-repeat; background-position:right 14px center;
+  }
+  .preform input:focus, .preform select:focus{border-color:var(--gold-dim);}
+  .preform-row{display:grid; grid-template-columns:1fr 1fr; gap:14px;}
+  .preform-submit{width:100%; justify-content:center; margin-top:4px;}
+  .preform-note{font-size:0.78rem; color:var(--muted); text-align:center; margin-top:12px;}
+
+  .exit-overlay{
+    position:fixed; inset:0; background:rgba(13,12,16,0.82); z-index:100;
+    display:none; align-items:center; justify-content:center; padding:24px;
+  }
+  .exit-overlay.show{display:flex;}
+  .exit-modal{
+    background:var(--night-2); border:1px solid var(--gold-dim); border-radius:20px;
+    padding:36px 32px; max-width:420px; width:100%; position:relative;
+  }
+  .exit-close{
+    position:absolute; top:14px; right:14px; background:none; border:none;
+    color:var(--muted); font-size:1.5rem; cursor:pointer; line-height:1; padding:6px;
+  }
+  .exit-modal h3{font-size:1.25rem; margin-bottom:10px; padding-right:20px;}
+  .exit-modal p{color:var(--muted); font-size:0.92rem; margin-bottom:20px; line-height:1.6;}
+  .exit-modal input{
+    width:100%; background:var(--night); border:1px solid var(--line); border-radius:10px;
+    color:var(--ink); padding:12px 14px; margin-bottom:14px; font-family:'Inter'; font-size:0.92rem;
+  }
+  .exit-modal .btn-primary{width:100%; justify-content:center;}
+
   .calendly-frame{
     border:1px solid var(--line); border-radius:20px; overflow:hidden; background:#fff;
     min-height:640px; display:flex; align-items:center; justify-content:center;
@@ -517,12 +560,62 @@
       </ul>
     </div>
     <div data-reveal>
-      <div class="calendly-frame">
-        <div class="calendly-inline-widget" data-url="https://calendly.com/bastiencochet2007/30min" style="min-width:320px;"></div>
+      <div id="preform-step" class="preform-card">
+        <form class="preform" id="lead-form">
+          <div>
+            <label for="lf-name">Prénom</label>
+            <input type="text" id="lf-name" name="first_name" autocomplete="given-name" required>
+          </div>
+          <div>
+            <label for="lf-email">Email</label>
+            <input type="email" id="lf-email" name="email" autocomplete="email" required>
+          </div>
+          <div class="preform-row">
+            <div>
+              <label for="lf-phone">Téléphone</label>
+              <input type="tel" id="lf-phone" name="phone" autocomplete="tel">
+            </div>
+            <div>
+              <label for="lf-guests">Invités visés</label>
+              <select id="lf-guests" name="guest_count_target">
+                <option value="">Choisir</option>
+                <option value="100-200">100 à 200</option>
+                <option value="200-400">200 à 400</option>
+                <option value="400+">400 et plus</option>
+              </select>
+            </div>
+          </div>
+          <div>
+            <label for="lf-event">Type d'événement</label>
+            <select id="lf-event" name="event_type">
+              <option value="">Choisir</option>
+              <option value="soiree_privee">Soirée privée</option>
+              <option value="club_bar">Club / bar à événements</option>
+              <option value="festival">Festival</option>
+              <option value="lieu_reception">Lieu de réception</option>
+              <option value="autre">Autre</option>
+            </select>
+          </div>
+          <button type="submit" class="btn-primary preform-submit">Voir les disponibilités →</button>
+          <p class="preform-note">Vos infos servent uniquement à préparer l'appel.</p>
+        </form>
       </div>
+      <div id="calendly-step" class="calendly-frame" style="display:none;"></div>
     </div>
   </div>
 </section>
+
+<div class="exit-overlay" id="exit-overlay">
+  <div class="exit-modal">
+    <button type="button" class="exit-close" id="exit-close" aria-label="Fermer">×</button>
+    <h3>Avant de partir</h3>
+    <p>Laissez-nous votre email, on vous recontacte avec un premier axe de campagne pour votre événement.</p>
+    <form id="exit-form">
+      <input type="email" id="exit-email" placeholder="Votre email" required>
+      <button type="submit" class="btn-primary">Envoyer</button>
+    </form>
+  </div>
+</div>
 
 <footer>
   <div class="logo">Affluo<span style="color:var(--gold);">.</span></div>
@@ -537,6 +630,166 @@
     entries.forEach(e=>{ if(e.isIntersecting){ e.target.classList.add('in'); io.unobserve(e.target); } });
   }, {threshold:0.15});
   els.forEach(el=>io.observe(el));
+</script>
+
+<script>
+(function(){
+  // --- Session ---
+  const SESSION_KEY = 'affluo_session_id';
+  let sessionId = sessionStorage.getItem(SESSION_KEY);
+  if (!sessionId) {
+    sessionId = crypto.randomUUID();
+    sessionStorage.setItem(SESSION_KEY, sessionId);
+  }
+
+  // --- Contexte (UTM, device, referrer) ---
+  const params = new URLSearchParams(window.location.search);
+  const context = {
+    utm_source: params.get('utm_source'),
+    utm_medium: params.get('utm_medium'),
+    utm_campaign: params.get('utm_campaign'),
+    referrer: document.referrer || null,
+    device_type: /Mobi|Android/i.test(navigator.userAgent) ? 'mobile' : 'desktop',
+  };
+
+  // --- Helpers réseau (best-effort, ne bloque jamais l'UX) ---
+  function saveLead(data) {
+    fetch('/.netlify/functions/save-lead', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ session_id: sessionId, ...context, ...data }),
+    }).catch(()=>{});
+  }
+  function logEvent(event_type, event_data) {
+    fetch('/.netlify/functions/log-event', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ session_id: sessionId, event_type, event_data }),
+    }).catch(()=>{});
+  }
+
+  // --- Arrivée sur la page : crée le lead en "partial" dès le début ---
+  saveLead({ status: 'partial' });
+  logEvent('page_view', { path: window.location.pathname });
+
+  // --- Autosave du formulaire, champ par champ, avec debounce ---
+  const form = document.getElementById('lead-form');
+  const fields = ['first_name', 'email', 'phone', 'event_type', 'guest_count_target'];
+  let debounceTimer;
+  function collectFormData(){
+    const data = {};
+    fields.forEach(name=>{
+      const el = form.elements[name];
+      if (el && el.value) data[name] = el.value;
+    });
+    return data;
+  }
+  if (form) {
+    fields.forEach(name=>{
+      const el = form.elements[name];
+      if (!el) return;
+      const handler = () => {
+        clearTimeout(debounceTimer);
+        debounceTimer = setTimeout(()=>{
+          saveLead({ status: 'partial', ...collectFormData() });
+        }, 800);
+      };
+      el.addEventListener('input', handler);
+      el.addEventListener('blur', handler);
+    });
+
+    // --- Soumission : marque le lead "completed" puis affiche Calendly préfilli ---
+    form.addEventListener('submit', function(e){
+      e.preventDefault();
+      const data = collectFormData();
+      saveLead({ status: 'completed', ...data });
+      logEvent('preform_completed', data);
+
+      document.getElementById('preform-step').style.display = 'none';
+      const calStep = document.getElementById('calendly-step');
+      calStep.style.display = 'block';
+
+      const calendlyUrl = new URL('https://calendly.com/bastiencochet2007/30min');
+      if (data.first_name) calendlyUrl.searchParams.set('name', data.first_name);
+      if (data.email) calendlyUrl.searchParams.set('email', data.email);
+      if (data.event_type) calendlyUrl.searchParams.set('a1', data.event_type);
+      if (data.guest_count_target) calendlyUrl.searchParams.set('a2', data.guest_count_target);
+
+      const widgetDiv = document.createElement('div');
+      widgetDiv.className = 'calendly-inline-widget';
+      widgetDiv.style.minWidth = '320px';
+      widgetDiv.style.height = '640px';
+      calStep.appendChild(widgetDiv);
+
+      if (window.Calendly) {
+        window.Calendly.initInlineWidget({ url: calendlyUrl.toString(), parentElement: widgetDiv });
+      }
+    });
+  }
+
+  // --- Écoute des events Calendly (postMessage) ---
+  window.addEventListener('message', function(e){
+    if (!e.data || !e.data.event || typeof e.data.event !== 'string') return;
+    if (!e.data.event.startsWith('calendly.')) return;
+    const type = e.data.event.replace('calendly.', '');
+    logEvent('calendly_' + type, e.data.payload || null);
+    if (type === 'event_scheduled') {
+      saveLead({ status: 'booked', calendly_scheduled: true });
+    }
+  });
+
+  // --- Scroll depth (25/50/75/100%) ---
+  const seenDepths = new Set();
+  let scrollTicking = false;
+  window.addEventListener('scroll', function(){
+    if (scrollTicking) return;
+    scrollTicking = true;
+    requestAnimationFrame(function(){
+      const scrolled = window.scrollY + window.innerHeight;
+      const total = document.documentElement.scrollHeight;
+      const pct = Math.round((scrolled / total) * 100);
+      [25, 50, 75, 100].forEach(depth=>{
+        if (pct >= depth && !seenDepths.has(depth)) {
+          seenDepths.add(depth);
+          logEvent('scroll_depth', { depth });
+        }
+      });
+      scrollTicking = false;
+    });
+  });
+
+  // --- Exit intent (desktop uniquement, une seule fois, si intérêt réel montré) ---
+  const pourQuiEl = document.getElementById('pour-qui');
+  let pourQuiSeen = false;
+  if (pourQuiEl) {
+    new IntersectionObserver((entries)=>{
+      entries.forEach(e=>{ if (e.isIntersecting) pourQuiSeen = true; });
+    }, { threshold: 0.2 }).observe(pourQuiEl);
+  }
+
+  let exitShown = false;
+  const overlay = document.getElementById('exit-overlay');
+  document.addEventListener('mouseout', function(e){
+    if (exitShown || !pourQuiSeen || context.device_type === 'mobile') return;
+    if (e.clientY > 0) return;
+    const formStarted = form && fields.some(name => form.elements[name] && form.elements[name].value);
+    if (formStarted) return;
+    exitShown = true;
+    overlay.classList.add('show');
+    logEvent('exit_intent_shown');
+  });
+  document.getElementById('exit-close').addEventListener('click', function(){
+    overlay.classList.remove('show');
+  });
+  document.getElementById('exit-form').addEventListener('submit', function(e){
+    e.preventDefault();
+    const email = document.getElementById('exit-email').value;
+    saveLead({ status: 'partial', email });
+    logEvent('exit_intent_captured', { email });
+    overlay.classList.remove('show');
+    document.getElementById('exit-form').innerHTML = '<p style="color:var(--muted); font-size:0.9rem;">Merci, on revient vers vous rapidement.</p>';
+  });
+})();
 </script>
 
 </body>
