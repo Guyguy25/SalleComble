@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex, nofollow">
+<title>Affluo — Admin</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,500;0,9..144,600;0,9..144,700;1,9..144,500&family=Inter:wght@400;500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#f4efe4;
+    --night:#0d0c10;
+    --night-2:#151319;
+    --night-3:#1c1a21;
+    --wine:#5a1f2e;
+    --gold:#e7a13b;
+    --gold-dim:#a97c3a;
+    --line: rgba(244,239,228,0.14);
+    --muted: rgba(244,239,228,0.62);
+    --ok:#7bb37a;
+    --warn:#e7a13b;
+    --info:#7a9fe0;
+  }
+  *{box-sizing:border-box; margin:0; padding:0;}
+  body{
+    background:var(--night); color:var(--ink); font-family:'Inter', sans-serif;
+    min-height:100vh;
+  }
+  h1,h2,h3{font-family:'Fraunces', serif; font-weight:600; letter-spacing:-0.01em;}
+  .eyebrow{
+    font-family:'Space Mono', monospace; text-transform:uppercase; letter-spacing:0.16em; font-size:0.72rem;
+    color:var(--gold); display:flex; align-items:center; gap:10px;
+  }
+  .eyebrow::before{content:''; width:24px; height:1px; background:var(--gold);}
+
+  /* ---------- Login ---------- */
+  #login-screen{
+    min-height:100vh; display:flex; align-items:center; justify-content:center; padding:24px;
+    background:
+      radial-gradient(ellipse 60% 50% at 50% 0%, rgba(231,161,59,0.14), transparent 70%),
+      radial-gradient(ellipse 80% 60% at 80% 100%, rgba(90,31,46,0.3), transparent 70%);
+  }
+  .login-card{
+    width:100%; max-width:380px; border:1px solid var(--line); border-radius:20px;
+    background:var(--night-2); padding:38px 34px;
+  }
+  .login-card .logo{font-family:'Fraunces', serif; font-size:1.4rem; margin-bottom:6px;}
+  .login-card .logo span{color:var(--gold);}
+  .login-card h1{font-size:1.5rem; margin:14px 0 6px;}
+  .login-card p.sub{color:var(--muted); font-size:0.9rem; margin-bottom:26px;}
+  .field{margin-bottom:16px;}
+  .field label{
+    font-family:'Space Mono', monospace; font-size:0.7rem; color:var(--muted);
+    text-transform:uppercase; letter-spacing:0.06em; margin-bottom:7px; display:block;
+  }
+  .field input{
+    width:100%; background:var(--night); border:1px solid var(--line); border-radius:10px;
+    color:var(--ink); padding:12px 14px; font-family:'Inter'; font-size:0.92rem; outline:none;
+    transition:border-color .2s ease;
+  }
+  .field input:focus{border-color:var(--gold-dim);}
+  .btn-primary{
+    font-family:'Inter'; font-weight:700; font-size:0.92rem; color:var(--night);
+    background:var(--gold); padding:13px 20px; border-radius:100px; border:none; cursor:pointer;
+    width:100%; transition:transform .2s ease, box-shadow .2s ease;
+  }
+  .btn-primary:hover{transform:translateY(-2px); box-shadow:0 10px 26px rgba(231,161,59,0.3);}
+  .btn-primary:disabled{opacity:0.6; cursor:not-allowed; transform:none; box-shadow:none;}
+  .login-error{
+    color:#e08b8b; font-size:0.85rem; margin-top:14px; text-align:center; display:none;
+  }
+
+  /* ---------- Dashboard shell ---------- */
+  #dashboard{display:none; min-height:100vh;}
+  header.top{
+    display:flex; align-items:center; justify-content:space-between; padding:20px 5vw;
+    border-bottom:1px solid var(--line); position:sticky; top:0; background:rgba(13,12,16,0.92);
+    backdrop-filter:blur(10px); z-index:10; gap:16px; flex-wrap:wrap;
+  }
+  header.top .logo{font-family:'Fraunces', serif; font-size:1.15rem;}
+  header.top .logo span{color:var(--gold);}
+  .btn-ghost{
+    font-family:'Inter'; font-weight:600; font-size:0.85rem; color:var(--ink);
+    border:1px solid var(--line); padding:10px 18px; border-radius:100px; background:none; cursor:pointer;
+    transition:border-color .2s ease, background .2s ease;
+  }
+  .btn-ghost:hover{border-color:var(--gold-dim); background:rgba(231,161,59,0.06);}
+
+  main{padding:36px 5vw 80px;}
+
+  .stats{display:grid; grid-template-columns:repeat(4,1fr); gap:2px; background:var(--line); border:1px solid var(--line); margin-bottom:36px;}
+  .stat{background:var(--night-2); padding:24px 22px;}
+  .stat .n{font-family:'Fraunces'; font-size:2rem; color:var(--gold); font-weight:600;}
+  .stat .l{color:var(--muted); font-size:0.78rem; margin-top:6px; letter-spacing:0.02em;}
+
+  .toolbar{display:flex; gap:12px; margin-bottom:20px; flex-wrap:wrap; align-items:center; justify-content:space-between;}
+  .toolbar-left{display:flex; gap:12px; flex-wrap:wrap;}
+  .toolbar input, .toolbar select{
+    background:var(--night-2); border:1px solid var(--line); border-radius:10px;
+    color:var(--ink); padding:10px 14px; font-family:'Inter'; font-size:0.85rem; outline:none;
+  }
+  .toolbar input{min-width:220px;}
+  .toolbar input:focus, .toolbar select:focus{border-color:var(--gold-dim);}
+  .result-count{color:var(--muted); font-size:0.82rem; font-family:'Space Mono', monospace;}
+
+  .table-wrap{
+    border:1px solid var(--line); border-radius:16px; overflow:auto; background:var(--night-2);
+  }
+  table{width:100%; border-collapse:collapse; font-size:0.85rem; white-space:nowrap;}
+  thead th{
+    text-align:left; font-family:'Space Mono', monospace; font-size:0.68rem; text-transform:uppercase;
+    letter-spacing:0.05em; color:var(--muted); padding:14px 16px; border-bottom:1px solid var(--line);
+    position:sticky; top:0; background:var(--night-2);
+  }
+  tbody td{padding:13px 16px; border-bottom:1px solid var(--line); color:var(--ink);}
+  tbody tr:last-child td{border-bottom:none;}
+  tbody tr:hover{background:rgba(244,239,228,0.03);}
+  .cell-muted{color:var(--muted);}
+
+  .badge{
+    display:inline-flex; align-items:center; gap:6px; font-family:'Space Mono', monospace; font-size:0.7rem;
+    padding:4px 10px; border-radius:100px; text-transform:uppercase; letter-spacing:0.04em;
+  }
+  .badge::before{content:''; width:6px; height:6px; border-radius:50%; background:currentColor;}
+  .badge.status-partial{color:var(--warn); background:rgba(231,161,59,0.12);}
+  .badge.status-completed{color:var(--info); background:rgba(122,159,224,0.12);}
+  .badge.status-booked{color:var(--ok); background:rgba(123,179,122,0.12);}
+  .badge.status-default{color:var(--muted); background:rgba(244,239,228,0.08);}
+
+  .empty-state, .loading-state{
+    padding:60px 20px; text-align:center; color:var(--muted); font-size:0.9rem;
+  }
+
+  @media (max-width: 900px){
+    .stats{grid-template-columns:repeat(2,1fr);}
+    main{padding:28px 4vw 60px;}
+  }
+</style>
+</head>
+<body>
+
+<!-- ---------- Login ---------- -->
+<div id="login-screen">
+  <div class="login-card">
+    <div class="logo">Affluo<span>.</span></div>
+    <h1>Espace admin</h1>
+    <p class="sub">Connectez-vous pour accéder aux leads.</p>
+    <form id="login-form">
+      <div class="field">
+        <label for="lg-user">Identifiant</label>
+        <input type="text" id="lg-user" autocomplete="username" required>
+      </div>
+      <div class="field">
+        <label for="lg-pass">Mot de passe</label>
+        <input type="password" id="lg-pass" autocomplete="current-password" required>
+      </div>
+      <button type="submit" class="btn-primary" id="lg-submit">Se connecter</button>
+      <p class="login-error" id="lg-error">Identifiants incorrects.</p>
+    </form>
+  </div>
+</div>
+
+<!-- ---------- Dashboard ---------- -->
+<div id="dashboard">
+  <header class="top">
+    <div class="logo">Affluo<span style="color:var(--gold);">.</span> — Admin</div>
+    <button class="btn-ghost" id="logout-btn">Déconnexion</button>
+  </header>
+
+  <main>
+    <p class="eyebrow" style="margin-bottom:8px;">Leads</p>
+    <h2 style="font-size:1.6rem; margin-bottom:28px;">Vue d'ensemble</h2>
+
+    <div class="stats" id="stats"></div>
+
+    <div class="toolbar">
+      <div class="toolbar-left">
+        <input type="text" id="search" placeholder="Rechercher nom, email, téléphone…">
+        <select id="status-filter">
+          <option value="">Tous les statuts</option>
+          <option value="partial">Partial</option>
+          <option value="completed">Completed</option>
+          <option value="booked">Booked</option>
+        </select>
+      </div>
+      <span class="result-count" id="result-count"></span>
+    </div>
+
+    <div class="table-wrap">
+      <div id="table-target">
+        <div class="loading-state">Chargement des leads…</div>
+      </div>
+    </div>
+  </main>
+</div>
+
+<script>
+(function(){
+  const loginScreen = document.getElementById('login-screen');
+  const dashboard = document.getElementById('dashboard');
+  const loginForm = document.getElementById('login-form');
+  const loginError = document.getElementById('lg-error');
+  const loginSubmit = document.getElementById('lg-submit');
+  const tableTarget = document.getElementById('table-target');
+  const statsEl = document.getElementById('stats');
+  const searchEl = document.getElementById('search');
+  const statusFilterEl = document.getElementById('status-filter');
+  const resultCountEl = document.getElementById('result-count');
+
+  let allLeads = [];
+
+  function showDashboard(){
+    loginScreen.style.display = 'none';
+    dashboard.style.display = 'block';
+    loadLeads();
+  }
+  function showLogin(){
+    dashboard.style.display = 'none';
+    loginScreen.style.display = 'flex';
+  }
+
+  // --- Login ---
+  loginForm.addEventListener('submit', async function(e){
+    e.preventDefault();
+    loginError.style.display = 'none';
+    loginSubmit.disabled = true;
+    loginSubmit.textContent = 'Connexion…';
+    try {
+      const res = await fetch('/.netlify/functions/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          username: document.getElementById('lg-user').value,
+          password: document.getElementById('lg-pass').value,
+        }),
+      });
+      if (!res.ok) throw new Error();
+      showDashboard();
+    } catch {
+      loginError.style.display = 'block';
+    } finally {
+      loginSubmit.disabled = false;
+      loginSubmit.textContent = 'Se connecter';
+    }
+  });
+
+  document.getElementById('logout-btn').addEventListener('click', async function(){
+    await fetch('/.netlify/functions/logout', { method: 'POST' }).catch(()=>{});
+    showLogin();
+  });
+
+  // --- Load leads ---
+  async function loadLeads(){
+    tableTarget.innerHTML = '<div class="loading-state">Chargement des leads…</div>';
+    try {
+      const res = await fetch('/.netlify/functions/get-leads');
+      if (res.status === 401) { showLogin(); return; }
+      if (!res.ok) throw new Error();
+      const data = await res.json();
+      allLeads = data.leads || [];
+      renderStats(allLeads);
+      renderTable(allLeads);
+    } catch {
+      tableTarget.innerHTML = '<div class="empty-state">Erreur lors du chargement des leads.</div>';
+    }
+  }
+
+  function renderStats(leads){
+    const total = leads.length;
+    const completed = leads.filter(l => l.status === 'completed').length;
+    const booked = leads.filter(l => l.status === 'booked').length;
+    const partial = leads.filter(l => l.status === 'partial').length;
+    statsEl.innerHTML = [
+      ['Total leads', total],
+      ['Partial', partial],
+      ['Completed', completed],
+      ['Booked', booked],
+    ].map(([label, n]) => `<div class="stat"><div class="n">${n}</div><div class="l">${label}</div></div>`).join('');
+  }
+
+  function badge(status){
+    const known = ['partial', 'completed', 'booked'];
+    const cls = known.includes(status) ? `status-${status}` : 'status-default';
+    return `<span class="badge ${cls}">${status || '—'}</span>`;
+  }
+
+  function formatDate(value){
+    if (!value) return '—';
+    const d = new Date(value);
+    if (isNaN(d)) return String(value);
+    return d.toLocaleString('fr-FR', { day:'2-digit', month:'2-digit', year:'2-digit', hour:'2-digit', minute:'2-digit' });
+  }
+
+  const PRIORITY_COLS = ['created_at', 'status', 'first_name', 'email', 'phone', 'event_type', 'guest_count_target', 'utm_source', 'utm_medium', 'utm_campaign', 'device_type', 'calendly_scheduled'];
+
+  function getColumns(leads){
+    if (!leads.length) return [];
+    const keys = Object.keys(leads[0]).filter(k => k !== 'session_id' && k !== 'id' && k !== 'referrer');
+    return keys.sort((a, b) => {
+      const ia = PRIORITY_COLS.indexOf(a);
+      const ib = PRIORITY_COLS.indexOf(b);
+      if (ia === -1 && ib === -1) return a.localeCompare(b);
+      if (ia === -1) return 1;
+      if (ib === -1) return -1;
+      return ia - ib;
+    });
+  }
+
+  function renderTable(leads){
+    const filtered = applyFilters(leads);
+    resultCountEl.textContent = `${filtered.length} résultat${filtered.length > 1 ? 's' : ''}`;
+
+    if (!filtered.length) {
+      tableTarget.innerHTML = '<div class="empty-state">Aucun lead ne correspond à ces critères.</div>';
+      return;
+    }
+
+    const cols = getColumns(leads);
+    const thead = `<thead><tr>${cols.map(c => `<th>${c.replace(/_/g, ' ')}</th>`).join('')}</tr></thead>`;
+    const rows = filtered.map(lead => {
+      const cells = cols.map(c => {
+        const val = lead[c];
+        if (c === 'status') return `<td>${badge(val)}</td>`;
+        if (c === 'created_at' || c === 'updated_at') return `<td class="cell-muted">${formatDate(val)}</td>`;
+        if (c === 'calendly_scheduled') return `<td>${val ? 'Oui' : 'Non'}</td>`;
+        if (val === null || val === undefined || val === '') return `<td class="cell-muted">—</td>`;
+        return `<td>${String(val)}</td>`;
+      }).join('');
+      return `<tr>${cells}</tr>`;
+    }).join('');
+
+    tableTarget.innerHTML = `<table>${thead}<tbody>${rows}</tbody></table>`;
+  }
+
+  function applyFilters(leads){
+    const q = searchEl.value.trim().toLowerCase();
+    const status = statusFilterEl.value;
+    return leads.filter(l => {
+      if (status && l.status !== status) return false;
+      if (!q) return true;
+      const haystack = [l.first_name, l.email, l.phone].filter(Boolean).join(' ').toLowerCase();
+      return haystack.includes(q);
+    });
+  }
+
+  searchEl.addEventListener('input', () => renderTable(allLeads));
+  statusFilterEl.addEventListener('change', () => renderTable(allLeads));
+
+  // --- Bootstrap: check if already logged in ---
+  (async function init(){
+    try {
+      const res = await fetch('/.netlify/functions/get-leads');
+      if (res.ok) { showDashboard(); return; }
+    } catch {}
+    showLogin();
+  })();
+})();
+</script>
+
+</body>
+</html>
