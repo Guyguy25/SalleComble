@@ -7,6 +7,7 @@
 <title>Affluo — Admin</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,500;0,9..144,600;0,9..144,700;1,9..144,500&family=Inter:wght@400;500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.5.0/chart.umd.min.js"></script>
 <style>
   :root{
     --ink:#f4efe4;
@@ -23,10 +24,7 @@
     --info:#7a9fe0;
   }
   *{box-sizing:border-box; margin:0; padding:0;}
-  body{
-    background:var(--night); color:var(--ink); font-family:'Inter', sans-serif;
-    min-height:100vh;
-  }
+  body{ background:var(--night); color:var(--ink); font-family:'Inter', sans-serif; min-height:100vh; }
   h1,h2,h3{font-family:'Fraunces', serif; font-weight:600; letter-spacing:-0.01em;}
   .eyebrow{
     font-family:'Space Mono', monospace; text-transform:uppercase; letter-spacing:0.16em; font-size:0.72rem;
@@ -67,9 +65,7 @@
   }
   .btn-primary:hover{transform:translateY(-2px); box-shadow:0 10px 26px rgba(231,161,59,0.3);}
   .btn-primary:disabled{opacity:0.6; cursor:not-allowed; transform:none; box-shadow:none;}
-  .login-error{
-    color:#e08b8b; font-size:0.85rem; margin-top:14px; text-align:center; display:none;
-  }
+  .login-error{ color:#e08b8b; font-size:0.85rem; margin-top:14px; text-align:center; display:none; }
 
   /* ---------- Dashboard shell ---------- */
   #dashboard{display:none; min-height:100vh;}
@@ -86,27 +82,56 @@
     transition:border-color .2s ease, background .2s ease;
   }
   .btn-ghost:hover{border-color:var(--gold-dim); background:rgba(231,161,59,0.06);}
+  .btn-ghost.active{border-color:var(--gold); color:var(--gold);}
 
   main{padding:36px 5vw 80px;}
+  section.block{margin-bottom:44px;}
+  .block-head{display:flex; align-items:center; justify-content:space-between; gap:16px; margin-bottom:20px; flex-wrap:wrap;}
+  .block-head h2{font-size:1.15rem; font-weight:500;}
+  .range-picker{display:flex; gap:8px;}
+  .range-picker button{padding:8px 14px; font-size:0.78rem;}
 
-  .stats{display:grid; grid-template-columns:repeat(4,1fr); gap:2px; background:var(--line); border:1px solid var(--line); margin-bottom:36px;}
-  .stat{background:var(--night-2); padding:24px 22px;}
-  .stat .n{font-family:'Fraunces'; font-size:2rem; color:var(--gold); font-weight:600;}
-  .stat .l{color:var(--muted); font-size:0.78rem; margin-top:6px; letter-spacing:0.02em;}
+  /* Funnel */
+  .funnel{display:grid; grid-template-columns:repeat(4,1fr); gap:2px; background:var(--line); border:1px solid var(--line);}
+  .funnel-step{background:var(--night-2); padding:24px 22px; position:relative;}
+  .funnel-step .n{font-family:'Fraunces'; font-size:2.1rem; color:var(--gold); font-weight:600;}
+  .funnel-step .l{color:var(--muted); font-size:0.78rem; margin-top:6px; letter-spacing:0.02em;}
+  .funnel-step .r{font-family:'Space Mono', monospace; font-size:0.72rem; color:var(--gold-dim); margin-top:10px;}
 
+  /* Cards / panels */
+  .panel{border:1px solid var(--line); border-radius:16px; background:var(--night-2); padding:24px;}
+  .grid-2{display:grid; grid-template-columns:1.4fr 1fr; gap:20px;}
+  .grid-3{display:grid; grid-template-columns:repeat(3,1fr); gap:20px;}
+  canvas{max-width:100%;}
+
+  .mini-table{width:100%; border-collapse:collapse; font-size:0.85rem;}
+  .mini-table th{
+    text-align:left; font-family:'Space Mono', monospace; font-size:0.66rem; text-transform:uppercase;
+    letter-spacing:0.05em; color:var(--muted); padding:8px 4px; border-bottom:1px solid var(--line);
+  }
+  .mini-table td{padding:9px 4px; border-bottom:1px solid var(--line);}
+  .mini-table tr:last-child td{border-bottom:none;}
+  .bar-track{background:var(--night-3); border-radius:6px; height:6px; overflow:hidden; margin-top:5px;}
+  .bar-fill{background:var(--gold); height:100%; border-radius:6px;}
+
+  .stat-row{display:flex; gap:20px; flex-wrap:wrap;}
+  .stat-mini{flex:1; min-width:140px;}
+  .stat-mini .n{font-family:'Fraunces'; font-size:1.6rem; color:var(--gold); font-weight:600;}
+  .stat-mini .l{color:var(--muted); font-size:0.75rem; margin-top:4px;}
+
+  /* Leads table */
   .toolbar{display:flex; gap:12px; margin-bottom:20px; flex-wrap:wrap; align-items:center; justify-content:space-between;}
-  .toolbar-left{display:flex; gap:12px; flex-wrap:wrap;}
-  .toolbar input, .toolbar select{
+  .toolbar-left{display:flex; gap:12px; flex-wrap:wrap; align-items:center;}
+  .toolbar input[type="text"], .toolbar select{
     background:var(--night-2); border:1px solid var(--line); border-radius:10px;
     color:var(--ink); padding:10px 14px; font-family:'Inter'; font-size:0.85rem; outline:none;
   }
-  .toolbar input{min-width:220px;}
+  .toolbar input[type="text"]{min-width:220px;}
   .toolbar input:focus, .toolbar select:focus{border-color:var(--gold-dim);}
+  .checkbox-label{display:flex; align-items:center; gap:8px; font-size:0.85rem; color:var(--muted); cursor:pointer;}
   .result-count{color:var(--muted); font-size:0.82rem; font-family:'Space Mono', monospace;}
 
-  .table-wrap{
-    border:1px solid var(--line); border-radius:16px; overflow:auto; background:var(--night-2);
-  }
+  .table-wrap{border:1px solid var(--line); border-radius:16px; overflow:auto; background:var(--night-2);}
   table{width:100%; border-collapse:collapse; font-size:0.85rem; white-space:nowrap;}
   thead th{
     text-align:left; font-family:'Space Mono', monospace; font-size:0.68rem; text-transform:uppercase;
@@ -128,12 +153,13 @@
   .badge.status-booked{color:var(--ok); background:rgba(123,179,122,0.12);}
   .badge.status-default{color:var(--muted); background:rgba(244,239,228,0.08);}
 
-  .empty-state, .loading-state{
-    padding:60px 20px; text-align:center; color:var(--muted); font-size:0.9rem;
-  }
+  .empty-state, .loading-state{ padding:60px 20px; text-align:center; color:var(--muted); font-size:0.9rem; }
 
-  @media (max-width: 900px){
-    .stats{grid-template-columns:repeat(2,1fr);}
+  @media (max-width: 1000px){
+    .grid-2, .grid-3{grid-template-columns:1fr;}
+    .funnel{grid-template-columns:repeat(2,1fr);}
+  }
+  @media (max-width: 600px){
     main{padding:28px 4vw 60px;}
   }
 </style>
@@ -145,7 +171,7 @@
   <div class="login-card">
     <div class="logo">Affluo<span>.</span></div>
     <h1>Espace admin</h1>
-    <p class="sub">Connectez-vous pour accéder aux leads.</p>
+    <p class="sub">Connectez-vous pour accéder au dashboard.</p>
     <form id="login-form">
       <div class="field">
         <label for="lg-user">Identifiant</label>
@@ -169,29 +195,92 @@
   </header>
 
   <main>
-    <p class="eyebrow" style="margin-bottom:8px;">Leads</p>
-    <h2 style="font-size:1.6rem; margin-bottom:28px;">Vue d'ensemble</h2>
 
-    <div class="stats" id="stats"></div>
-
-    <div class="toolbar">
-      <div class="toolbar-left">
-        <input type="text" id="search" placeholder="Rechercher nom, email, téléphone…">
-        <select id="status-filter">
-          <option value="">Tous les statuts</option>
-          <option value="partial">Partial</option>
-          <option value="completed">Completed</option>
-          <option value="booked">Booked</option>
-        </select>
+    <!-- Funnel -->
+    <section class="block">
+      <div class="block-head">
+        <div>
+          <p class="eyebrow" style="margin-bottom:8px;">Vue d'ensemble</p>
+          <h2 style="font-size:1.6rem; font-family:'Fraunces';">Funnel de conversion</h2>
+        </div>
+        <div class="range-picker" id="range-picker">
+          <button class="btn-ghost" data-days="7">7 jours</button>
+          <button class="btn-ghost active" data-days="30">30 jours</button>
+          <button class="btn-ghost" data-days="90">90 jours</button>
+        </div>
       </div>
-      <span class="result-count" id="result-count"></span>
-    </div>
-
-    <div class="table-wrap">
-      <div id="table-target">
-        <div class="loading-state">Chargement des leads…</div>
+      <div class="funnel" id="funnel">
+        <div class="funnel-step"><div class="n">—</div><div class="l">Visites</div><div class="r">&nbsp;</div></div>
+        <div class="funnel-step"><div class="n">—</div><div class="l">Leads chauds (ont commencé à écrire)</div><div class="r">&nbsp;</div></div>
+        <div class="funnel-step"><div class="n">—</div><div class="l">Formulaire complété</div><div class="r">&nbsp;</div></div>
+        <div class="funnel-step"><div class="n">—</div><div class="l">Appel réservé (booké)</div><div class="r">&nbsp;</div></div>
       </div>
-    </div>
+    </section>
+
+    <!-- Time series -->
+    <section class="block">
+      <div class="block-head"><h2>Évolution dans le temps</h2></div>
+      <div class="panel">
+        <canvas id="chart-timeseries" height="90"></canvas>
+      </div>
+    </section>
+
+    <!-- Sources + devices -->
+    <section class="block">
+      <div class="grid-2">
+        <div class="panel">
+          <div class="block-head" style="margin-bottom:14px;"><h2>Sources (UTM)</h2></div>
+          <div id="utm-table"></div>
+        </div>
+        <div class="panel">
+          <div class="block-head" style="margin-bottom:14px;"><h2>Appareils</h2></div>
+          <canvas id="chart-devices" height="180"></canvas>
+        </div>
+      </div>
+    </section>
+
+    <!-- Engagement -->
+    <section class="block">
+      <div class="grid-3">
+        <div class="panel">
+          <div class="block-head" style="margin-bottom:14px;"><h2>Profondeur de scroll</h2></div>
+          <div id="scroll-funnel"></div>
+        </div>
+        <div class="panel">
+          <div class="block-head" style="margin-bottom:14px;"><h2>Exit intent</h2></div>
+          <div class="stat-row" id="exit-intent-stats"></div>
+        </div>
+        <div class="panel">
+          <div class="block-head" style="margin-bottom:14px;"><h2>Top events</h2></div>
+          <div id="top-events"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Leads table -->
+    <section class="block">
+      <div class="block-head"><h2>Leads</h2></div>
+      <div class="toolbar">
+        <div class="toolbar-left">
+          <input type="text" id="search" placeholder="Rechercher nom, email, téléphone…">
+          <select id="status-filter">
+            <option value="">Tous les statuts</option>
+            <option value="partial">Partial</option>
+            <option value="completed">Completed</option>
+            <option value="booked">Booked</option>
+          </select>
+          <label class="checkbox-label">
+            <input type="checkbox" id="hot-only">
+            Leads chauds uniquement
+          </label>
+        </div>
+        <span class="result-count" id="result-count"></span>
+      </div>
+      <div class="table-wrap">
+        <div id="table-target"><div class="loading-state">Chargement des leads…</div></div>
+      </div>
+    </section>
+
   </main>
 </div>
 
@@ -203,17 +292,28 @@
   const loginError = document.getElementById('lg-error');
   const loginSubmit = document.getElementById('lg-submit');
   const tableTarget = document.getElementById('table-target');
-  const statsEl = document.getElementById('stats');
   const searchEl = document.getElementById('search');
   const statusFilterEl = document.getElementById('status-filter');
+  const hotOnlyEl = document.getElementById('hot-only');
   const resultCountEl = document.getElementById('result-count');
+  const rangePicker = document.getElementById('range-picker');
 
   let allLeads = [];
+  let currentDays = 30;
+  let tsChart = null;
+  let devicesChart = null;
+
+  const GOLD = '#e7a13b';
+  const GOLD_DIM = '#a97c3a';
+  const OK = '#7bb37a';
+  const INFO = '#7a9fe0';
+  const MUTED = 'rgba(244,239,228,0.55)';
+  const GRID = 'rgba(244,239,228,0.08)';
 
   function showDashboard(){
     loginScreen.style.display = 'none';
     dashboard.style.display = 'block';
-    loadLeads();
+    loadAll();
   }
   function showLogin(){
     dashboard.style.display = 'none';
@@ -250,7 +350,192 @@
     showLogin();
   });
 
-  // --- Load leads ---
+  // --- Range picker ---
+  rangePicker.addEventListener('click', function(e){
+    const btn = e.target.closest('button[data-days]');
+    if (!btn) return;
+    rangePicker.querySelectorAll('button').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    currentDays = parseInt(btn.dataset.days, 10);
+    loadStats();
+  });
+
+  function loadAll(){
+    loadStats();
+    loadLeads();
+  }
+
+  // --- Stats ---
+  async function loadStats(){
+    try {
+      const res = await fetch('/.netlify/functions/get-stats?days=' + currentDays);
+      if (res.status === 401) { showLogin(); return; }
+      if (!res.ok) {
+        let detail = '';
+        try { detail = (await res.json()).error || ''; } catch {}
+        throw new Error(`get-stats a répondu ${res.status}${detail ? ' — ' + detail : ''}`);
+      }
+      const data = await res.json();
+      console.log('get-stats response:', data);
+      safeRender('funnel', () => renderFunnel(data.totals));
+      safeRender('timeseries', () => renderTimeseries(data.timeseries));
+      safeRender('utm table', () => renderUtmTable(data.utm_sources));
+      safeRender('devices', () => renderDevices(data.devices));
+      safeRender('scroll funnel', () => renderScrollFunnel(data.scroll_depth, data.totals.total_visits));
+      safeRender('exit intent', () => renderExitIntent(data.exit_intent));
+      safeRender('top events', () => renderTopEvents(data.top_events));
+    } catch (err) {
+      console.error('loadStats failed:', err);
+      showStatsError(err.message || 'Erreur inconnue');
+    }
+  }
+
+  function showStatsError(message){
+    const targets = ['#funnel', '#chart-timeseries', '#utm-table', '#chart-devices', '#scroll-funnel', '#exit-intent-stats', '#top-events'];
+    targets.forEach(sel => {
+      const el = document.querySelector(sel);
+      if (!el) return;
+      const parent = el.tagName === 'CANVAS' ? el.parentElement : el;
+      parent.innerHTML = `<p style="color:#e08b8b; font-size:0.82rem;">${message}</p>`;
+    });
+  }
+
+  function safeRender(label, fn){
+    try {
+      fn();
+    } catch (err) {
+      console.error('render failed:', label, err);
+    }
+  }
+
+  function pct(n, d){ return d > 0 ? Math.round((n / d) * 1000) / 10 : 0; }
+
+  function renderFunnel(t){
+    const steps = document.querySelectorAll('#funnel .funnel-step');
+    const values = [t.total_visits, t.engaged, t.completed, t.booked];
+    const rates = [null, pct(t.engaged, t.total_visits), pct(t.completed, t.total_visits), pct(t.booked, t.total_visits)];
+    steps.forEach((step, i) => {
+      step.querySelector('.n').textContent = values[i];
+      const r = step.querySelector('.r');
+      r.textContent = rates[i] !== null ? rates[i] + '% des visites' : '\u00a0';
+    });
+  }
+
+  function renderTimeseries(rows){
+    const labels = rows.map(r => new Date(r.day).toLocaleDateString('fr-FR', { day:'2-digit', month:'2-digit' }));
+    const datasets = [
+      { label:'Visites', data: rows.map(r=>r.visits), borderColor: MUTED, backgroundColor:'transparent', tension:0.3 },
+      { label:'Leads chauds', data: rows.map(r=>r.engaged), borderColor: GOLD, backgroundColor:'transparent', tension:0.3 },
+      { label:'Complétés', data: rows.map(r=>r.completed), borderColor: INFO, backgroundColor:'transparent', tension:0.3 },
+      { label:'Bookés', data: rows.map(r=>r.booked), borderColor: OK, backgroundColor:'transparent', tension:0.3 },
+    ];
+    if (tsChart) { tsChart.data.labels = labels; tsChart.data.datasets = datasets; tsChart.update(); return; }
+    tsChart = new Chart(document.getElementById('chart-timeseries'), {
+      type: 'line',
+      data: { labels, datasets },
+      options: {
+        responsive: true,
+        interaction: { mode: 'index', intersect: false },
+        plugins: { legend: { labels: { color: '#f4efe4', font: { family: 'Inter', size: 11 } } } },
+        scales: {
+          x: { ticks: { color: MUTED, font: { size: 10 } }, grid: { color: GRID } },
+          y: { beginAtZero: true, ticks: { color: MUTED, font: { size: 10 } }, grid: { color: GRID } },
+        },
+      },
+    });
+  }
+
+  function renderUtmTable(rows){
+    const target = document.getElementById('utm-table');
+    if (!rows.length) { target.innerHTML = '<p style="color:var(--muted); font-size:0.85rem;">Aucune donnée.</p>'; return; }
+    const max = Math.max(...rows.map(r=>r.visits), 1);
+    target.innerHTML = `
+      <table class="mini-table">
+        <thead><tr><th>Source</th><th>Visites</th><th>Complétés</th></tr></thead>
+        <tbody>
+          ${rows.map(r => `
+            <tr>
+              <td>
+                ${r.utm_source}
+                <div class="bar-track"><div class="bar-fill" style="width:${(r.visits/max*100).toFixed(0)}%;"></div></div>
+              </td>
+              <td>${r.visits}</td>
+              <td>${r.completed}</td>
+            </tr>
+          `).join('')}
+        </tbody>
+      </table>
+    `;
+  }
+
+  function renderDevices(rows){
+    const labels = rows.map(r=>r.device_type);
+    const data = rows.map(r=>r.visits);
+    const colors = [GOLD, INFO, OK, GOLD_DIM, MUTED];
+    if (devicesChart) { devicesChart.data.labels = labels; devicesChart.data.datasets[0].data = data; devicesChart.update(); return; }
+    devicesChart = new Chart(document.getElementById('chart-devices'), {
+      type: 'doughnut',
+      data: { labels, datasets: [{ data, backgroundColor: colors, borderColor: '#151319', borderWidth: 2 }] },
+      options: {
+        plugins: { legend: { position: 'bottom', labels: { color: '#f4efe4', font: { family: 'Inter', size: 11 } } } },
+      },
+    });
+  }
+
+  function renderScrollFunnel(rows, totalVisits){
+    const target = document.getElementById('scroll-funnel');
+    const byDepth = {};
+    rows.forEach(r => { byDepth[r.depth] = r.sessions; });
+    const depths = [25, 50, 75, 100];
+    target.innerHTML = depths.map(d => {
+      const n = byDepth[d] || 0;
+      const p = pct(n, totalVisits);
+      return `
+        <div style="margin-bottom:12px;">
+          <div style="display:flex; justify-content:space-between; font-size:0.82rem; margin-bottom:5px;">
+            <span>${d}%</span><span class="cell-muted">${n} (${p}%)</span>
+          </div>
+          <div class="bar-track"><div class="bar-fill" style="width:${p}%;"></div></div>
+        </div>
+      `;
+    }).join('');
+  }
+
+  function renderExitIntent(rows){
+    const shown = rows.find(r=>r.event_type==='exit_intent_shown');
+    const captured = rows.find(r=>r.event_type==='exit_intent_captured');
+    const shownN = shown ? shown.sessions : 0;
+    const capturedN = captured ? captured.sessions : 0;
+    document.getElementById('exit-intent-stats').innerHTML = `
+      <div class="stat-mini"><div class="n">${shownN}</div><div class="l">Popups affichés</div></div>
+      <div class="stat-mini"><div class="n">${capturedN}</div><div class="l">Emails récupérés</div></div>
+      <div class="stat-mini"><div class="n">${pct(capturedN, shownN)}%</div><div class="l">Taux de capture</div></div>
+    `;
+  }
+
+  function renderTopEvents(rows){
+    const target = document.getElementById('top-events');
+    if (!rows.length) { target.innerHTML = '<p style="color:var(--muted); font-size:0.85rem;">Aucune donnée.</p>'; return; }
+    const max = Math.max(...rows.map(r=>r.count), 1);
+    target.innerHTML = `
+      <table class="mini-table">
+        <thead><tr><th>Event</th><th>Total</th></tr></thead>
+        <tbody>
+          ${rows.map(r => `
+            <tr>
+              <td>
+                ${r.event_type}
+                <div class="bar-track"><div class="bar-fill" style="width:${(r.count/max*100).toFixed(0)}%;"></div></div>
+              </td>
+              <td>${r.count}</td>
+            </tr>
+          `).join('')}
+        </tbody>
+      </table>
+    `;
+  }
+
+  // --- Leads table ---
   async function loadLeads(){
     tableTarget.innerHTML = '<div class="loading-state">Chargement des leads…</div>';
     try {
@@ -259,24 +544,10 @@
       if (!res.ok) throw new Error();
       const data = await res.json();
       allLeads = data.leads || [];
-      renderStats(allLeads);
       renderTable(allLeads);
     } catch {
       tableTarget.innerHTML = '<div class="empty-state">Erreur lors du chargement des leads.</div>';
     }
-  }
-
-  function renderStats(leads){
-    const total = leads.length;
-    const completed = leads.filter(l => l.status === 'completed').length;
-    const booked = leads.filter(l => l.status === 'booked').length;
-    const partial = leads.filter(l => l.status === 'partial').length;
-    statsEl.innerHTML = [
-      ['Total leads', total],
-      ['Partial', partial],
-      ['Completed', completed],
-      ['Booked', booked],
-    ].map(([label, n]) => `<div class="stat"><div class="n">${n}</div><div class="l">${label}</div></div>`).join('');
   }
 
   function badge(status){
@@ -290,6 +561,10 @@
     const d = new Date(value);
     if (isNaN(d)) return String(value);
     return d.toLocaleString('fr-FR', { day:'2-digit', month:'2-digit', year:'2-digit', hour:'2-digit', minute:'2-digit' });
+  }
+
+  function isHot(lead){
+    return Boolean(lead.first_name || lead.email || lead.phone);
   }
 
   const PRIORITY_COLS = ['created_at', 'status', 'first_name', 'email', 'phone', 'event_type', 'guest_count_target', 'utm_source', 'utm_medium', 'utm_campaign', 'device_type', 'calendly_scheduled'];
@@ -336,8 +611,10 @@
   function applyFilters(leads){
     const q = searchEl.value.trim().toLowerCase();
     const status = statusFilterEl.value;
+    const hotOnly = hotOnlyEl.checked;
     return leads.filter(l => {
       if (status && l.status !== status) return false;
+      if (hotOnly && !isHot(l)) return false;
       if (!q) return true;
       const haystack = [l.first_name, l.email, l.phone].filter(Boolean).join(' ').toLowerCase();
       return haystack.includes(q);
@@ -346,8 +623,9 @@
 
   searchEl.addEventListener('input', () => renderTable(allLeads));
   statusFilterEl.addEventListener('change', () => renderTable(allLeads));
+  hotOnlyEl.addEventListener('change', () => renderTable(allLeads));
 
-  // --- Bootstrap: check if already logged in ---
+  // --- Bootstrap ---
   (async function init(){
     try {
       const res = await fetch('/.netlify/functions/get-leads');
